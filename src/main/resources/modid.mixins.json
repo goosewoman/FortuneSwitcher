@@ -5,7 +5,8 @@
   "mixins": [
   ],
   "client": [
-    "ToolSwitcherMixin"
+    "ToolSwitcherMixin",
+    "InputMixin"
   ],
   "injectors": {
     "defaultRequire": 1

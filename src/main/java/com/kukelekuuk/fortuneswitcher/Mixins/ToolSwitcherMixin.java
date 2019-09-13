@@ -4,9 +4,8 @@ import com.kukelekuuk.fortuneswitcher.FortuneSwitcher;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
@@ -15,28 +14,16 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin( MinecraftClient.class )
+@Mixin( WorldRenderer.class )
 public class ToolSwitcherMixin
 {
 
-    @Inject( method = "tick", slice = @Slice( from = @At( value = "INVOKE", target = "Lnet/minecraft/util/profiler/DisableableProfiler;push(Ljava/lang/String;)V" ) ), at = @At( value = "HEAD", ordinal = 0 ) )
+    @Inject( method = "drawHighlightedBlockOutline", at = @At( value = "HEAD") )
     private void clientTick( CallbackInfo callbackInfo )
     {
         tickClient();
-    }
-
-    @Inject( method = "handleInputEvents", at = @At( "HEAD" ), cancellable = true )
-    private void handleInput( CallbackInfo callbackInfo )
-    {
-        if ( FortuneSwitcher.keyBinding.wasPressed() )
-        {
-            ClientPlayerEntity player = MinecraftClient.getInstance().player;
-            player.world.playSound( player, player.getBlockPos(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 1f, FortuneSwitcher.isEnabled ? .5f : 1f );
-            FortuneSwitcher.isEnabled = !FortuneSwitcher.isEnabled;
-        }
     }
 
     private void tickClient()
